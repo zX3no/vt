@@ -1,0 +1,9 @@
+main
+test
+*.exe
+*.exe~
+*.so
+*.dylib
+*.dll
+*.json
+vls.log
