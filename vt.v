@@ -6,10 +6,11 @@ import json
 
 const (
 	help_text = '
-Usage: t [options] [files]
+Usage: t [options] [args]
 Options:
+   none		Add or check a task
+   del		Delete a task
    help              
-   del
 '
 )
 
@@ -19,6 +20,7 @@ mut:
 }
 
 struct Task {
+mut:
 	content string
 	checked bool
 }
@@ -72,7 +74,7 @@ fn main() {
 		return
 	}
 
-	lines := os.read_lines('vt.json') or { []}
+	lines := os.read_lines('vt.json') or { [] }
 	mut j := json.decode(Json, lines.join('\n')) or { Json{} }
 
 	if args.len > 1 {
@@ -89,8 +91,13 @@ fn main() {
 			else {
 				nums := get_nums(text)
 				if nums.len == 0 {
-					// add a task
+					// add task
 					j.tasks << [Task{text, false}]
+				} else if j.tasks.len != 0 {
+					// check tasks
+					for num in nums {
+						j.tasks[num].checked = !j.tasks[num].checked
+					}
 				}
 			}
 		}
