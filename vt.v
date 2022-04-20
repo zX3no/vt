@@ -77,16 +77,21 @@ fn main() {
 	lines := os.read_lines('vt.json') or { [] }
 	mut j := json.decode(Json, lines.join('\n')) or { Json{} }
 
+	defer {
+		encode := json.encode_pretty(j)
+		os.write_file('vt.json', encode) or { panic('Could not write file.') }
+	}
+
 	if args.len > 1 {
 		text := args[1..].join(' ')
 		no_arg_text := args[2..].join(' ')
 		match args[1] {
 			'del' {
 				nums := get_nums(no_arg_text)
-				for num in nums {
+				// delete backwards
+				for num in nums.reverse() {
 					j.tasks.delete(num)
 				}
-				println(nums)
 			}
 			else {
 				nums := get_nums(text)
@@ -103,6 +108,11 @@ fn main() {
 		}
 	}
 
+	if j.tasks.len == 0 {
+		println("You have no tasks! Add on with vt 'I'm a new task!'")
+		return
+	}
+
 	mut i := 1
 
 	for task in j.tasks {
@@ -115,7 +125,4 @@ fn main() {
 		println(' $task.content')
 		i++
 	}
-
-	encode := json.encode_pretty(j)
-	os.write_file('vt.json', encode) ?
 }
