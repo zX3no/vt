@@ -83,26 +83,24 @@ fn main() {
 	}
 
 	if args.len > 1 {
-		text := args[1..].join(' ')
-		no_arg_text := args[2..].join(' ')
-		match args[1] {
-			'del' {
-				nums := get_nums(no_arg_text)
-				// delete backwards
-				for num in nums.reverse() {
-					j.tasks.delete(num)
-				}
+		if args[1] == 'del' {
+			text := args[2..].join(' ')
+			nums := get_nums(text)
+			// delete backwards
+			for num in nums.reverse() {
+				j.tasks.delete(num)
 			}
-			else {
-				nums := get_nums(text)
-				if nums.len == 0 {
-					// add task
-					j.tasks << [Task{text, false}]
-				} else if j.tasks.len != 0 {
-					// check tasks
-					for num in nums {
-						j.tasks[num].checked = !j.tasks[num].checked
-					}
+		} else if args[1] == 'add' {
+			text := args[2..].join(' ')
+			j.tasks << [Task{text, false}]
+		} else {
+			text := args[1..].join(' ')
+			nums := get_nums(text)
+
+			if j.tasks.len != 0 {
+				// check tasks
+				for num in nums {
+					j.tasks[num].checked = !j.tasks[num].checked
 				}
 			}
 		}
